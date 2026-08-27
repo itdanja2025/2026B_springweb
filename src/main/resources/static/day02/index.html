@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <title>Page Title</title>
+    <link rel='stylesheet' href='main.css'>
+</head>
+<body>
+
+    <!-- 스프링서버 실행 후: http://127.0.0.1:8080/day02/index.html -->
+    <h3> 스프링(톰캣)서버에서 실행되는 페이지(HTML) </h3>
+    <div> <!-- 레이아웃(구역)-->
+        내용: <input type="text" class="content" /> <br/> 
+            <!-- input입력상자, br줄바꿈 , class:마크업의식별자(복수) , id:마크업의식별자(단일) -->
+        작성자: <input type="text" class="writer" /> <br/>
+        <button onclick="boardSave()"> 등록 </button> 
+            <!-- button클릭상자 , onclick="JS함수()"  : 해당 마크업을 클릭시 JS함수 발동  -->
+    </div>
+    <div>
+        <table border="1"> <!-- 테이블 -->
+            <thead> <!-- 제목구역 -->
+                <tr> <!-- 행 -->
+                    <th> 번호 </th> <th> 작성자 </th> <th> 내용 </th> <th> 비고 </th> <!-- 제목셀 -->
+                </tr>
+            </thead>
+            <tbody class="boardList"> <!-- 본문구역-->
+                <tr>
+                    <td> 1 </td> <td> 유재석 </td> <td> 안녕하세요 </td> 
+                    <td> <button>수정</button> <button>삭제</button> </td> <!-- 데이터셀(한칸)-->
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
+
+<!--
+    스프링 프로젝트내
+    src->main->java-> 자바파일(controller등) = 서블릿 (동적서버/웹컨테이너)
+        src->main->java->example->day02->BoardController->@GetMapping("/board/findall")
+        통신경로 : http://127.0.0.1:8080/board/findall
+
+    src->main->resources-> static(html/css/js등) -> 정적서버/웹서버
+        src->main->resources->static->day02->index.html파일생성
+        통신경로 : http://127.0.0.1:8080/day02/index.html
+-->
