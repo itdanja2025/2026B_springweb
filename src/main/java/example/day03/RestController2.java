@@ -1,8 +1,12 @@
 package example.day03;
 
+import java.util.Map;
+
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -35,4 +39,17 @@ public class RestController2 {
         System.out.println( name ); System.out.println( age ); System.out.println( count );
         return 7;
     }
+    // 4. http://localhost:8080/day03/task8?name=유재석&age=10
+    @DeleteMapping("/task8")
+    public int task8( @RequestParam Map<String,Object> map ){
+        System.out.println( map );
+        return 8;
+    }
+    // 5.http://localhost:8080/day03/task9?name=유재석&age=10
+    @DeleteMapping("/task9")
+    public int task9( @ModelAttribute ExamDto examDto ){ // 
+        System.out.println( examDto );
+        return 9;
+    }
+
 } // CLASS END 
