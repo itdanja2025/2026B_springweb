@@ -18,7 +18,7 @@ public class RestController2 {
     @GetMapping("/task5") // 중복없는 URL 정의
     public String task5(){ return "서버에서 응답하는 메시지"; }
     // ---------- 요청 매개변수 ----------- //
-    // 2. @RequestParam이란? 요청 content-type이 (HTML)form 또는 쿼리스트링의 매개변수 매핑/연결 , 생략가능
+    // 2. @RequestParam이란? 요청 content-type이 (HTML)form 또는 쿼리스트링의 매개변수 매핑/연결
     // http://localhost:8080/day03/task6?name=유재석&age=10
     @GetMapping("/task6") // 클래스내 동일한 URL에 대해서는 @RequestMapping 에서 정의한다.
     public int task6( @RequestParam String name , @RequestParam int age ){
