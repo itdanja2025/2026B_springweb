@@ -73,5 +73,4 @@ class SampleController5{
     @Component 등록되는 시점: @SpringBootApplication( @ComponentScan )
     즉] 스프링이 켜지면서 폴더내 @Componet 다 찾아(같은폴더/하위폴더) 내서 스프링 컨테이너 등록 구조
     AppStart 주의할점: 최상위에 위치한다.
-    
 */
