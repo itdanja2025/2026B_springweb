@@ -1,10 +1,5 @@
 package example.day05;
 
-import java.time.LocalDateTime;
-
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -29,7 +24,7 @@ public class TestEntity extends BaseTime {
     @Column( name="name" , nullable = false , length = 100 , unique = true  ) // 제약조건설정
     private String name; // 이름
     @Column( columnDefinition = "varchar(100) default '제품설명' not null ")
-    private String desc; // 설명
+    private String descri; // 설명
     @Column( insertable = true , updatable = true )
     private Integer price; // 가격
 }
