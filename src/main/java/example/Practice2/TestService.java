@@ -1,12 +1,12 @@
 package example.Practice2;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
+
+import jakarta.transaction.Transactional;
 
 @Service // 해당 클래스가 비지니스로직 객체(빈)등록
 public class TestService {
@@ -40,4 +40,31 @@ public class TestService {
         }
         return null; // 객체가 없다는 뜻이 null
     }
+
+    // [4]
+    public boolean testDelete( int no ){
+        // 1. findById 이용한 삭제 엔티티 확인
+        Optional<TestEntity> optional = testRepository.findById( no );
+        // 2. 조회 결과 존재하면
+        if( optional.isPresent() ){
+            // 3. 삭제 .
+            testRepository.delete( optional.get() );
+            return true;
+        }
+        return false; 
+    }
+    // [5]
+    @Transactional
+    public boolean testUpdate( TestEntity testEntity ){
+        // 1. findById 이용한 수정할 엔티티 확인/조회
+        Optional<TestEntity> optional = testRepository.findById(testEntity.getNo() );
+        if( optional.isPresent() ){  // 2. 조회 결과 존재하면 
+            TestEntity entity = optional.get(); // 3. 엔티티 꺼내기 
+            // 4. 영속성을 이용한 엔티티 setter 수정한다. 주의할점: @Transactional
+            entity.setContent( testEntity.getContent() );
+            return true;
+        }
+        return false;
+    }
 }
+
