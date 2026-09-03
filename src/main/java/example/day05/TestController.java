@@ -20,14 +20,14 @@ public class TestController {
     }
     // 2. 등록 , http://localhost:8080/test , 
     // { "name" : "우유" , "price" : 700 , "descri" : "신선한" }
-    // createDate 자동으로 들어가는 확인!!
+    // createDate/updateDate 자동으로 들어가는 확인!!
     @PostMapping("/test")
     public boolean 저장( @RequestBody TestDto testDto ){
         return testService.저장( testDto );
     }
     // 3. 수정 , http://localhost:8080/test , 
     // { "no" : 1,  "price" : 2000 , "descri" : "탄산음료" }
-    // updateDate 자동으로 반영 되는지 확인!!
+    // updateDate 자동으로 반영/수정 되는지 확인!!
     @PutMapping("/test")
     public boolean 수정( 
         @RequestBody TestDto testDto ){
