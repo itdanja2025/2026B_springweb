@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feed</title>
+    <link href="index.css" rel="stylesheet" />
+</head>
+<body>
+
+    <div class="app-container">
+        <header class="top-nav">
+            <h1>Feed</h1>
+        </header>
+
+        <!-- 피드 출력 영역 -->
+        <main class="feed-container"></main>
+
+        <!-- 하단 고정 바 -->
+        <footer class="bottom-bar">
+            <button type="button" class="write-fab" onclick="openPostModal()">
+                <span>✦</span> 새 스레드 작성하기
+            </button>
+        </footer>
+    </div>
+
+    <!-- 글 등록 모달 -->
+    <div class="modal-overlay modal-post">
+        <div class="modal-sheet">
+            <div class="modal-top">
+                <span class="modal-title">새 글 쓰기</span>
+                <button type="button" class="close-btn" onclick="closePostModal()">✕</button>
+            </div>
+            <div class="input-row">
+                <input type="text" class="input-post-author" placeholder="닉네임">
+                <input type="password" class="input-post-password" placeholder="비밀번호">
+            </div>
+            <textarea class="input-post-content" placeholder="어떤 이야기를 나누고 싶으신가요?"></textarea>
+            <button type="button" class="btn-submit" onclick="writePost()">게시하기</button>
+        </div>
+    </div>
+    <!-- Axios CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="index.js"></script>
+
+</body>
+</html>
