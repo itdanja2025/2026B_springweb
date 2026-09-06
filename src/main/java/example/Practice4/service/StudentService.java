@@ -1,8 +1,5 @@
 package example.Practice4.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,15 +26,4 @@ public class StudentService {
         return true;
     }
 
-    // 학생 전체 조회 (편의 기능)
-    public List<StudentDto> studentFindAll() {
-        List<StudentEntity> list = studentRepository.findAll();
-        List<StudentDto> dtoList = new ArrayList<>();
-        list.forEach(entity -> {
-            StudentDto dto = StudentDto.from(entity);
-            dtoList.add(dto);
-
-        });
-        return dtoList;
-    }
 }

@@ -31,10 +31,4 @@ public class StudentController {
     public boolean studentDeleteParam(@RequestParam(name = "studentId") Long studentId) {
         return studentService.studentDelete(studentId);
     }
-
-    // 학생 전체 조회 (편의 REST API)
-    @GetMapping
-    public List<StudentDto> studentFindAll() {
-        return studentService.studentFindAll();
-    }
 }
