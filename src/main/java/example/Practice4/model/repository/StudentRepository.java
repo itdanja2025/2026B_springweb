@@ -1,5 +1,11 @@
 package example.Practice4.model.repository;
 
-public class StudentRepository {
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import example.Practice4.model.entity.StudentEntity;
+
+@Repository
+public interface StudentRepository extends JpaRepository<StudentEntity,Integer>{
     
 }
