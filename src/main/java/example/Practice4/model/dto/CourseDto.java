@@ -17,6 +17,7 @@ public class CourseDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     // + 학생목록
+    @Builder.Default
     private List<StudentDto> studentDtos = new ArrayList<>();
     // + toEntity : 과정등록 용도
     public CourseEntity toEntity( ){

@@ -20,13 +20,13 @@ import lombok.ToString;
 
 @Entity@Table( name="student")
 @NoArgsConstructor@AllArgsConstructor@Builder@Data
-public class StudentEntity extends BaseTime  {
+public class StudentEntity extends BaseTime {
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY)
     private Integer studentId;
     @Column
     private String studentName;
-
+    
     @OneToMany( mappedBy = "studentEntity" , cascade = CascadeType.ALL , fetch = FetchType.LAZY )
     @ToString.Exclude @Builder.Default
     private List<EnrollEntity> enrollEntities = new ArrayList<>();
