@@ -1,5 +1,6 @@
 package example.day07_0908;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -13,10 +14,10 @@ public class Exam3 {
             // 3] 레퍼런스API , member :: add( 3 , 4 )
 
         // [1] static 정적메소드 예시
-        Integer.parseInt( "10" ); // Integer.parseInt( 문자 ); 문자->정수 타입 반환 함수
+        int parsedNumber1 = Integer.parseInt( "10" ); // Integer.parseInt( 문자 ); 문자->정수 타입 반환 함수
 
         Function< String, Integer > function = Integer :: parseInt;   // :콜론 ;세미콜론
-        function.apply( "10" );
+        int parsedNumber2 = function.apply( "10" );
 
         // [2] 일반 메소드 예시
         List< String > names = List.of( "유재석" , "강호동" , "신동엽" , "서장훈" ); // 샘플
@@ -27,35 +28,43 @@ public class Exam3 {
             // 2-3 forEach문 + 레퍼런스API
         names.stream().forEach( System.out :: println  );
 
+        // [3] 임의 객체의 인스턴스 메소드 참조 (클래스명::인스턴스메소드)
+        // 람다: (str) -> str.length()
+        names.stream()
+                .map(String::length)
+                .forEach(len -> System.out.print(len + " "));
+        System.out.println();
+
         // [3] 생성자 예시
             // 3-1 for 문 , 리스트내 항목(이름) 하나씩 꺼내서 객체 생성
         for( int i = 0 ; i<names.size() ; i++ ){ new Post( names.get(i) ) ; }
             // 3-2 forEach문
         names.stream().forEach( ( x ) -> { new Post( x ); });
-            // 3-3 forEach문 + 레퍼런스API
-        names.stream().forEach( Post :: new );
             // ** 활용
-        List<Post> postList = names.stream() // 스트림(데이터들의흐름) 의 시작
-                //.map( (x) -> { return new Post(x); } )  // 방법1] 람다표현식
-                .map( Post :: new ) // 방법2] 메소드 레퍼런스API
-                .collect( Collectors.toList() );
+        // 스트림 + 메소드 참조 방식 (map에서 객체 생성 후 수집)
+        // 람다: .map(name -> new Post(name))
+        List<Post> postList = names.stream()
+                .map(Post::new) // 생성자 참조
+                .toList();      // Java 16+ 불변 리스트 변환
+
+        System.out.println("[4] postList = " + postList);
 
 
     } // main end
 } // class end
 
-class Post{
-    String name;
-    Post( String name ){
-        this.name=name;
+class Post {
+    private String name;
+
+    public Post(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "Post{name='" + name + "'}";
     }
 }
-
-
-
-
-
-
 
 
 

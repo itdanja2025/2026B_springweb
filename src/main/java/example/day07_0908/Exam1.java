@@ -1,6 +1,5 @@
 package example.day07_0908;
 
-import java.util.ArrayList;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
