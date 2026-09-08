@@ -21,8 +21,8 @@ public class CommentDto {
     // + FK 
     private Integer boardId;
     // 
-    public BoardEntity toEntity(){
-        return BoardEntity.builder()
+    public CommentEntity toEntity(){
+        return CommentEntity.builder()
             .content( this.content )
             .password( this.password )
             .author( this.author )
