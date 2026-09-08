@@ -2,6 +2,8 @@ package example.Practice5.model.dto;
 
 import java.time.LocalDateTime;
 
+import example.Practice5.model.entity.BoardEntity;
+import example.Practice5.model.entity.CommentEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,4 +20,23 @@ public class CommentDto {
     private LocalDateTime updatedAt;
     // + FK 
     private Integer boardId;
+    // 
+    public BoardEntity toEntity(){
+        return BoardEntity.builder()
+            .content( this.content )
+            .password( this.password )
+            .author( this.author )
+            .build();
+    }
+    //
+    public static CommentDto from( CommentEntity entity ){
+        return CommentDto.builder()
+            .id( entity.getId() )
+            .author( entity.getAuthor() )
+            .password( entity.getPassword() )
+            .content( entity.getContent() )
+            .createdAt( entity.getCreatedAt() )
+            .updatedAt( entity.getUpdatedAt() )
+            .build();
+    }
 }

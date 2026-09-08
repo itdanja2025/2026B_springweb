@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import example.Practice5.model.entity.BoardEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,4 +24,23 @@ public class BoardDto {
     // + 달린 댓글들
     @Builder.Default
     private List<CommentDto> comments = new ArrayList<>();
+    // 
+    public BoardEntity toEntity(){
+        return BoardEntity.builder()
+            .content( this.content )
+            .author( this.author )
+            .password( this.password )
+            .build();
+    }
+    // 
+    public static BoardDto from( BoardEntity entity ){
+        return BoardDto.builder()
+                .id( entity.getId() )
+                .author( entity.getAuthor() )
+                .password( entity.getPassword() )
+                .content( entity.getContent() )
+                .createdAt( entity.getCreatedAt() )
+                .updatedAt( entity.getUpdatedAt() )
+                .build();
+    }
 }
