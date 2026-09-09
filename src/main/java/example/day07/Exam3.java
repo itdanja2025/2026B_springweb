@@ -38,5 +38,9 @@ public class Exam3 {
             System.out.println( newList5 ); // [10, 8, 6]
             // *) JPA 에서 Entity <--> DTO 변환 과정
 
+            // 스트림이란? 컬렉션(리스트) 인스턴스를 흐름단위로 중간연산과 최종연산 제공 API(미리만든클래스/메소드)
+            // 메소드레퍼런스API: 미리 만들어진 메소드들을 간편하게 호출하는 방법 제공 API
+            // System.out.print("메소드호출 정석"); --> System.out::print;
+
     }
 }
