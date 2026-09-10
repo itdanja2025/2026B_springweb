@@ -53,6 +53,43 @@ func2( 4 , 20 ); // 익명 또는 람다 함수는 변수명 호출한다.
 func3( 10 , { name : '유재석'} );
 func4( 10 , 4 ); // 만일 인수가 없는 매개변수는 기본값 대입된다. // 매개변수3 = 'student' 
 
+// 6. 객체 : 여러개 값을 가진 하나의 값 , 주로 변수/상수에 저장
+// 6-1: { 속성명(key) : 속성값(value) } , 값에는 객체/배열/함수 도 저장가능
+const obj1 = { name : '유재석' , age : 40 , func1 : (param)=>{ } }
+console.log( obj1.func1() );    // 속성명으로 속성값 호출 
+// 6-2: [ 값 , 값 , 값 ]
+const obj2 = [ '유재석' , 40 , (param)=>{ } ]
+console.log( obj2[2]() );       // 인덱스로 속성값 호출 
 
+// 7. 스프레드 연산자: ...배열 또는 객체를 복사할 때 사용, 사용처: 주소값 변경 목적
+const obj3 = { ...obj1 , phone : "010" } // { ...기존객체 , 새로운속성 }
+console.log( obj3 )
+const obj4 = [ "010" , ...obj2 ] // [ ...기존배열 , 새로운값 ]
+console.log( obj4 )
 
+// 8. 구조 분해 할당: 배열 또는 객체에서 값을 분해 해서 각각 변수/상수 에 저장  
+const { name , age } = obj1 ; // 오른쪽 객체내 왼쪽에 각각 속성값들을 변수/상수에 값 대입
+console.log( name )
+console.log( age )
+const [ name2 , ...array2 ] = obj2; // 오른쪽 배열내 순서대로 값들을 변수/상수에 대입, ...나머지들을
+console.log( name2 )
+console.log( array2 ) // 나머지(그외)
+
+// 9. 콜백함수: 함수 전달 해서 나중에 함수 실행 ,
+function printSuccess( message ){ console.log("성공" , message ); }
+function printScore( score , onSuccess , onError ){
+    if( score >= 80 ) { onSuccess("합격") }
+    else{ onError("불합격"); }
+}
+printScore(  50  , printSuccess , ( message ) => { console.log('실패'+message) }  ) 
+// 콜백함수 방식으로 함수 호출 , 주의할점: 인수에 함수 전달시 함수실행X 함수정의O
+// 함수명( 3+3 );  인수: 6    //  함수명( plus(3,3) ) , 인수: 6   //   함수명( plus ) , 인수: plus함수
+
+// 10. 동기식: 먼저 호출한 함수/기능이 결과가 올때 까지 대기상태 , 동기화 
+//     비동기: 먼저 호출한 함수/기능이 결과는 순서 상관없이 결과 반환 상태 , axios 
+// axios 비동기통신이다. 동기화로 만드는 방법 , (1) 선언 함수앞에 async , (2) axios 앞에 await
+const backLoad = async ( ) => {
+    const response = await axios( );
+}
+backLoad( )
 
