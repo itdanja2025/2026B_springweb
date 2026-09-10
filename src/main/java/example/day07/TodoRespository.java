@@ -2,6 +2,7 @@ package example.day07;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,10 +17,11 @@ public interface TodoRespository extends JpaRepository<TodoEntity,Integer> {
     TodoEntity findByTitle( String title );
     List<TodoEntity> findByTitleAndContent( String title , String content );
     Map<String,Object> findByTitleOrContent( String title , String content );
+    List< Map<String,Object> > findByTitleAndContent2( String title , String content );
     // 2. 네이티브쿼리 : SQL 직접 작성, 추상메소드 이름은 아무거나
     // 추상메소드 위에 @Query( value = "직접SQL" , nativeQuery = true )
     // SQL 문법내 매개변수 대입시 ? 대신에 :매개변수명
-    @Query( value = "select * from todo where title = :title" , nativeQuery =  true )
+    @Query( value = "select title from todo where title = :title" , nativeQuery =  true )
     TodoEntity myquery1( String title );
     @Query( value = "select * from todo where title = :title and content = :content" , nativeQuery = true )
     List<TodoEntity> myquery2( String title , String content ); 
