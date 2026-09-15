@@ -33,15 +33,15 @@ public class Exam4 {
             names.stream().map( String::length ).forEach( System.out::println );
         // 4. names 리스트내 문자열/이름들을 각각 대입하여 Student 객체 만드세요.
             // 전통방식
-            List<Student> list1 = new ArrayList<>();
+            List<Student2> list1 = new ArrayList<>();
             for( int index = 0 ; index <= names.size() - 1 ; index++ ){
-                Student student = new Student( names.get(index) );
+                Student2 student = new Student( names.get(index) );
                 list1.add( student );
             }
             // 스트림API
-            List<Student> list2 = names.stream().map( (name) -> { return new Student(name); } ).toList();
+            List<Student2> list2 = names.stream().map( (name) -> { return new Student2(name); } ).toList();
             // 메소드참조(레퍼런스)
-            List<Student> list3 = names.stream().map( Student::new ).toList();
+            List<Student2> list3 = names.stream().map( Student2::new ).toList();
             /*
                 유형 
                 1. 클래스명::static메소드명
@@ -60,7 +60,7 @@ public class Exam4 {
             */
     }
 }
-class Student{
+class Student2{
     private String name;
-    public Student( String name ){ this.name = name; }
+    public Student2( String name ){ this.name = name; }
 }
