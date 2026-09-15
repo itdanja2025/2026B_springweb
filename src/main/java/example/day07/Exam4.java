@@ -35,7 +35,7 @@ public class Exam4 {
             // 전통방식
             List<Student2> list1 = new ArrayList<>();
             for( int index = 0 ; index <= names.size() - 1 ; index++ ){
-                Student2 student = new Student( names.get(index) );
+                Student2 student = new Student2( names.get(index) );
                 list1.add( student );
             }
             // 스트림API
