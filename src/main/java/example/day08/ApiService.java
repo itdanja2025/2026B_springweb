@@ -1,12 +1,18 @@
 package example.day08;
 
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 
 @Service 
 public class ApiService {
@@ -52,10 +58,45 @@ public class ApiService {
         }catch( Exception e ){ System.out.println( e ); }
         return  null;
     }
-    // 3
+    // [3]. 프로젝트내 resources>static> 파일명.csv 
+    public List<Map<String,Object>> test3(){
+        // 1. .csv파일 경로 , resources 이하 폴더 
+        String fileName = "static/중소벤처기업부_벤처기업명단_20260521.csv";
+        // 2. ClassPathResource 객체 이용하여 해당 경로내 파일 가져오기 [파일객체] 
+        ClassPathResource resource = new ClassPathResource(fileName);
+        try{
+        // 3. (대용량)파일들을 바이트로 읽어와서 바이트배열 저장  .getInputStream().readAllBytes(); , +일반예외
+            byte[] bytes = resource.getInputStream().readAllBytes();
+        // 4. 한글 인코딩, EUC-KR, CP949, UTF-8 등등 
+            InputStreamReader reader = new InputStreamReader( 
+                new java.io.ByteArrayInputStream(bytes) , 
+                Charset.forName("CP949") );
+        // 5. OpenCSV 이용하여 바이트들을 대입한다.
+        CSVReader csvReader = new CSVReaderBuilder(reader).build();
+        // 6. 주로 첫행은 제목(행) 가져오기 ( key/속성명 사용할 예정 )
+        String[] headers = csvReader.readNext(); // 한줄 읽어오기 
+        // 7. 나머지 행들은 반복문 이용하여 가져오기 
+        while( csvReader.readNext() != null ){ // 읽어온 행에 값이 없을 떄 까지 반복 
+            String[] value = csvReader.readNext(); 
+            // 8. 
+            for( int index = 0 ; index < headers.length ; index++ ){
+                System.out.println( headers[index] );
+                System.out.println( value[index] );
+            }
+        }
+        
+        }catch( Exception e ){ System.out.println( e );}
+    }
+
+
 }
 
 /*
+    JSON VS XML VS CSV
+        - JSON(자바스크립트객체) : { 속성명 : 속성값 , 속성명 : 속성명 }
+        - XML(마크업) : <속성명>속성값</속성명>         implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.22.2'
+        - CSV(,쉼표구분) : 값,값,값,값,값               implementation 'com.opencsv:opencsv:5.12.0'
+
     컬렉션프레임워크: List , Set , Map
         - List: 여러개 자료들을 인덱스로 구분하여 하나의 자료에 저장 
             -> [ 값1, 값2, 값3 ]
