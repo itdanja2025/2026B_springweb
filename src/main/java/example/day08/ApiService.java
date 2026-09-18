@@ -2,6 +2,8 @@ package example.day08;
 
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,7 +61,8 @@ public class ApiService {
         return  null;
     }
     // [3]. 프로젝트내 resources>static> 파일명.csv 
-    public List<Map<String,Object>> test3(){
+    public List< Map<String,Object> > test3(){
+        List< Map<String,Object> > list = new ArrayList<>();
         // 1. .csv파일 경로 , resources 이하 폴더 
         String fileName = "static/중소벤처기업부_벤처기업명단_20260521.csv";
         // 2. ClassPathResource 객체 이용하여 해당 경로내 파일 가져오기 [파일객체] 
@@ -70,31 +73,34 @@ public class ApiService {
         // 4. 한글 인코딩, EUC-KR, CP949, UTF-8 등등 
             InputStreamReader reader = new InputStreamReader( 
                 new java.io.ByteArrayInputStream(bytes) , 
-                Charset.forName("CP949") );
+                Charset.forName("EUC-KR") );
         // 5. OpenCSV 이용하여 바이트들을 대입한다.
-        CSVReader csvReader = new CSVReaderBuilder(reader).build();
+            CSVReader csvReader = new CSVReaderBuilder(reader).build();
         // 6. 주로 첫행은 제목(행) 가져오기 ( key/속성명 사용할 예정 )
-        String[] headers = csvReader.readNext(); // 한줄 읽어오기 
+            String[] headers = csvReader.readNext(); // 한줄 읽어오기 
         // 7. 나머지 행들은 반복문 이용하여 가져오기 
-        while( csvReader.readNext() != null ){ // 읽어온 행에 값이 없을 떄 까지 반복 
-            String[] value = csvReader.readNext(); 
-            // 8. 
-            for( int index = 0 ; index < headers.length ; index++ ){
-                System.out.println( headers[index] );
-                System.out.println( value[index] );
+            String[] values;
+            while( true ){ // 무한루프
+            // 8. 한줄씩 읽어오기 
+                values = csvReader.readNext();  // 한줄 읽어오기 
+                if( values == null ) break;     // 만약에 읽어온 데이터가 없으면 반복문 종료 
+            // 9. 반복문 이용하여 map 만들기
+                Map<String,Object> row = new LinkedHashMap<>();
+                for( int index = 0 ; index < headers.length ; index++ ){
+                    row.put( headers[index], values[index] );
+                }
+            // 10. list에 생성한 map 추가 
+                list.add( row );
             }
-        }
-        
         }catch( Exception e ){ System.out.println( e );}
+        return list;
     }
-
-
 }
 
 /*
     JSON VS XML VS CSV
         - JSON(자바스크립트객체) : { 속성명 : 속성값 , 속성명 : 속성명 }
-        - XML(마크업) : <속성명>속성값</속성명>         implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.22.2'
+        - XML(마크업) : <속성명>속성값</속성명>          implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.22.2'
         - CSV(,쉼표구분) : 값,값,값,값,값               implementation 'com.opencsv:opencsv:5.12.0'
 
     컬렉션프레임워크: List , Set , Map
@@ -104,6 +110,11 @@ public class ApiService {
             -> ( 값1, 값2, 값3 )
         - Map : key와value 한쌍(entry)으로 여러쌍을 하나의 자료에 저장
             -> { 속성명:값1 , 속성명:값2, 속성명:값3 }
+        
+        * List< Map<Object,String> >
+        * [ { }, { }, { } ]
+        
+
     WebClient 객체 : 스프링에서 외부 API 요청 라이브러리 
         1.설치: implementation 'org.springframework.boot:spring-boot-starter-webflux' 
         2.객체: WebClient webClient = WebClient.builder().build();

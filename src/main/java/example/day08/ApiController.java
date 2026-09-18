@@ -1,5 +1,6 @@
 package example.day08;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,5 +20,9 @@ public class ApiController {
     public Map<String,Object> test2(){
         return apiService.test2();
     }
-
+    // 3. 
+    @GetMapping ("/test3")
+    public List<Map<String,Object>> test3(){
+        return apiService.test3();
+    }
 }
