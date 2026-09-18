@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+
 @Service 
 public class ApiService {
     // 서비스키 안전하게 application.properties 에서 관리, 즉] 프로젝트간 api키는 github push 하지말자!, notion/excel 에서 공유
@@ -37,12 +39,20 @@ public class ApiService {
         url += "?serviceKey="+serviceKey;
         url += "&pageNo="+1;
         url += "&numOfRows"+10;
-        // 3. 
-        Map<String,Object> response = webClient.get( ).uri( url ).retrieve()
-                .bodyToMono(Map.class) // XML 타입 --> Map 직렬화/변환 실패
+        // 3. 주의할점: webClient 에서 xml 타입을 String 타입으로 가져오기
+        String response = webClient.get( ).uri( url ).retrieve()
+                .bodyToMono(String.class) // XML 타입 --String타입 
                 .block();
-        return  response;
+        // 4. String타입 -> xml 타입 변환 , 
+        XmlMapper xmlMapper = new XmlMapper(); // xml매퍼 객체 생성
+        // Map<String,Object> map = xmlMapper.readValue( xml문자열 , 타입명.class ); // +일반예외
+        try{
+            Map<String,Object> map = xmlMapper.readValue( response , Map.class );
+            return  map;
+        }catch( Exception e ){ System.out.println( e ); }
+        return  null;
     }
+    // 3
 }
 
 /*
