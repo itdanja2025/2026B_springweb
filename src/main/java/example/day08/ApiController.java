@@ -14,5 +14,10 @@ public class ApiController {
     public Map<String,Object> test1(){
         return apiService.test1();
     }
+    // 2.
+    @GetMapping("/test2")
+    public Map<String,Object> test2(){
+        return apiService.test2();
+    }
 
 }
