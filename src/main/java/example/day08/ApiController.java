@@ -3,11 +3,13 @@ package example.day08;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 
 @RestController @RequiredArgsConstructor 
+@CrossOrigin( value = "http://localhost:5173")
 public class ApiController {
     private final ApiService apiService;
     // 1. 
