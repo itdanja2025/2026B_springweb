@@ -1,5 +1,7 @@
 package example.day10;
 
+import java.util.Optional;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -38,4 +40,17 @@ public class MemberService {
         // 4) entity --> dto 변환하여 반환) , 로그인 전용 loginDto 있으면 더 좋다.
         return MemberDto.from(memberEntity);
     }
+
+    // [3] 내 정보 조회(PK:회원번호)
+    public MemberDto getMyInfo( Long mno ){
+        // 1) 컨트롤러에게 조회할 회원번호 받는다.
+        // 2) findById 이용하여 회원번호 조회
+        Optional<MemberEntity> optional = memberRepository.findById(mno);
+        if( optional.isPresent() ){ // 3)조회 결과 존재하면
+            MemberEntity memberEntity = optional.get(); // 엔티티 꺼내서
+            return MemberDto.from(memberEntity); // dto 변환하여 반환 
+        }
+        return null; // 4) 조회 결과 없으면 null 반환
+    }
+
 }
