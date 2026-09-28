@@ -20,6 +20,20 @@ public class MemberController {
     public boolean signup( @RequestBody MemberDto memberDto ){
         return memberService.signup( memberDto );
     }
+
+    // [2] 로그인 + 세션(인증 성공시 성공한 회원정보 저장/왜? 로그인 성공한 회원이 글쓰기/제품등록 등등 FK용도)
+    @PostMapping("/login")
+    public MemberDto login( @RequestBody MemberDto memberDto , HttpSession session ){
+        // 1. 서비스에게 인증 확인 한다.
+        MemberDto result = memberService.login(memberDto);
+        if( result == null ) return  null; // 로그인실패
+        // 2. 인증 성공이면 세션에 인증한 회원정보 담아주기.
+        // - 매개변수에 HttpSession 객체 정의
+        // - 'login_member' key(이름) 으로 memberDto value(로그인성공한) 정보 저장
+        session.setAttribute("login_member", result );
+        return result;
+    }
+
 }
 /*
 
