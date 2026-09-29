@@ -30,6 +30,7 @@ public class JwtUtil {
     public String createToken( Long mno ){
         String jwt = Jwts.builder() // 토큰 생성 시작
                     .subject( mno+"" ) // 토큰에 들어갈 내용(playload)들( 주로 식별번호, 권한 )
+                    .claim("type", "ACCESS")
                     .issuedAt( new Date() ) // 토큰 생성 시간 ,   
                     .expiration( new Date( new Date().getTime() + 1000L * 60 * 60 ) ) // 토큰 만료 시간 
                     // new Date() 현재시간 , new Date().getTime() 현재시간초 ,  + 1000L * 60(1분) * 60 (1시간)

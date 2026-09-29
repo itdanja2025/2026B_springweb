@@ -49,7 +49,7 @@ public class MemberController {
 
         // 4. 쿠키 생성 (HttpOnly, Lax)
         ResponseCookie accessCookie = ResponseCookie.from("accessToken", accessToken)
-                .path("/").maxAge(Duration.ofMinutes(60)).httpOnly(true).secure(false).sameSite("Lax").build();
+                .path("/").maxAge(Duration.ofMinutes(30)).httpOnly(true).secure(false).sameSite("Lax").build();
 
         ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", refreshToken)
                 .path("/").maxAge(Duration.ofDays(7)).httpOnly(true).secure(false).sameSite("Lax").build();
@@ -66,6 +66,7 @@ public class MemberController {
     public MemberDto getMyInfo( 
         // @CookieValue( value="쿠키명") ){ // 요청한 브라우저의 쿠키 가져오기 
         @CookieValue (value="accessToken" , required = false ) String token ){
+            System.out.println( token );
         //1. 만약에 token 가 없다면 비로그인
         if( token == null ) return  null;
         // ********* 쿠키에 저장된 token 이용하여 회원번호 찾기 ************
@@ -103,16 +104,16 @@ public class MemberController {
 
     // [4] 토큰 재발급 + RTR(Refresh Token Rotation)
     @PostMapping("/reissue")
-    public boolean reissue(
+    public MemberDto reissue(
             @CookieValue(value = "refreshToken", required = false) String refreshToken,
             HttpServletResponse response
     ) {
         // 1. 쿠키 존재 여부 확인
-        if (refreshToken == null) return false;
+        if (refreshToken == null) return null;
 
         // 2. 토큰 자체 유효성 및 mno 파싱
         Long mno = jwtUtil.getMnoFromToken(refreshToken);
-        if (mno == null) return false;
+        if (mno == null) return null;
 
         // 3. RedisService에서 저장된 원본 토큰 조회
         String savedRefreshToken = redisService.getRefreshToken(mno);
@@ -120,7 +121,7 @@ public class MemberController {
         // 4. 탈취 감지: 레디스에 없거나 전달받은 토큰과 다르면 침해로 간주 -> 레디스 토큰 파기
         if (savedRefreshToken == null || !refreshToken.equals(savedRefreshToken)) {
             redisService.deleteRefreshToken(mno); // 강제 로그아웃
-            return false;
+            return null;
         }
 
         // 5. [RTR] 새로운 AccessToken 및 RefreshToken 생성
@@ -140,6 +141,6 @@ public class MemberController {
         response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
         response.addHeader(HttpHeaders.SET_COOKIE, refreshCookie.toString());
 
-        return true;
+        return memberService.getMyInfo(mno);
     }
 }

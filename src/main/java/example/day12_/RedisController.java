@@ -1,10 +1,11 @@
 package example.day12_;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Duration;
 import java.util.*;
 
@@ -14,7 +15,8 @@ import java.util.*;
 public class RedisController {
 
     // [*] 간단한 텍스트를 레디스에 접근하는 객체
-    private final RedisTemplate redisTemplate; // 템플릿이란? 미리 만들어진 틀/형식
+    private final StringRedisTemplate redisTemplate; // 템플릿이란? 미리 만들어진 틀/형식
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     // [1] 간단한 텍스트를 레디스 서버에 저장 / 호출 하기
     @GetMapping("/test")
@@ -36,55 +38,87 @@ public class RedisController {
         return ResponseEntity.ok( result );
     } // method end
 
-    // day13/day06 CRUD 를 데이터베이스 없이 레디스로 실습 변환
+    // [1] 등록
+    // POST http://localhost:8080/redis
+    // Body: { "sno": 1, "name": "유재석", "kor": 90, "math": 70 }
+    @PostMapping("")
+    public String save(@RequestBody MemberDto memberDto) throws JsonProcessingException {
+        // 0. 중복 없는 key 구상 (예: student:1)
+        String key = "member:" + memberDto.getMno();
 
-    private final RedisTemplate<String,Object> studentTemplate;
-    // 1. 등록
-    @PostMapping("") // { "sno" : 1 , "name" : "유재석 " , "kor" : "90" , "math" : "70" }
-    private  ResponseEntity<?> save(@RequestBody StudentDto studentDto ){
-        // 0. 중복없는 key 구상
-        String key = "student:"+studentDto.getSno(); // sno를 key로 조합하여 , 예] student:1 , student:2
-        // 1. 레디스에 전달받은 값 저장한다.
-        // 예상 : { "student:1" : { sno : 1 , name : "강호동" , math : 80 , kor : 100 } }
-        studentTemplate.opsForValue().set( key , studentDto );
-        return ResponseEntity.ok().body("[저장성공]");
+        // 1. DTO 객체 -> JSON 문자열 변환 (직렬화)
+        String jsonStr = objectMapper.writeValueAsString(memberDto);
+
+        // 2. Redis에 순수 문자열로 저장
+        redisTemplate.opsForValue().set(key, jsonStr);
+
+        return "[저장성공]";
     }
-    // 2. 전체 조회
+
+    // [2] 전체 조회
+    // GET http://localhost:8080/redis
     @GetMapping("")
-    private ResponseEntity<?> findAll(){
-        // 0. 조회할 key를 모두 가져온다.  * : 레디스내 모든 키 / xxxx:* : xxxx:동일한 * 자리는 임의의 문자 대응
-        // studentTemplate.keys( "문자열*"); // 문자열까지는 동일하면 * 위치는 서로다른 문자열 패턴
-        Set<String> keys = studentTemplate.keys("student:*"); // student:1 , student:2 ~~
-        // 1. 반복문 이용한 value 꺼내서 리스트에 담기
-        List<Object> result = new ArrayList<>();
-        for( String key : keys ){ result.add( studentTemplate.opsForValue().get( key ) ); }
-        return ResponseEntity.ok().body( result );
+    public List<MemberDto> findAll() throws JsonProcessingException {
+        // 0. "student:*" 패턴의 모든 Key 조회
+        Set<String> keys = redisTemplate.keys("member:*");
+        List<MemberDto> result = new ArrayList<>();
+        if (keys != null) {
+            for (String key : keys) {
+                // 1. Redis에서 JSON 문자열 꺼내기
+                String jsonStr = redisTemplate.opsForValue().get(key);
+                if (jsonStr != null) {
+                    // 2. JSON 문자열 -> StudentDto 객체 변환 (역직렬화)
+                    MemberDto memberDto = objectMapper.readValue(jsonStr, MemberDto.class);
+                    result.add(memberDto);
+                }
+            }
+        }
+
+        return result;
     }
-    @GetMapping("/find") // http://localhost:8080/redis/find?sno=1 // 3. 개별 학생 조회
-    public ResponseEntity<?> find( @RequestParam int sno ){
-        String key = "student:"+sno;                            // 1. 조회할 key 구상
-        Object result = studentTemplate.opsForValue().get( key );  // 2. 특정한 key의 value 호출
-        return ResponseEntity.ok( result );
+
+    // [3] 개별 학생 조회
+    // GET http://localhost:8080/redis/find?sno=1
+    @GetMapping("/find")
+    public MemberDto find(@RequestParam(name="mno") int mno) throws JsonProcessingException {
+        String key = "member:" + mno;
+        // 1. 특정한 key의 JSON 문자열 호출
+        String jsonStr = redisTemplate.opsForValue().get(key);
+        if (jsonStr == null) {
+            return null;
+        }
+        // 2. JSON 문자열 -> StudentDto 객체 변환
+        MemberDto memberDto = objectMapper.readValue(jsonStr, MemberDto.class);
+        return memberDto;
     }
-    @DeleteMapping("")  // http://localhost:8080/redis?sno=1  // 4. 개별 삭제
-    public ResponseEntity< ? > delete(  @RequestParam int sno ){
-        String key = "student:"+sno; // 1. 삭제할 key 구상
-        // 2. 특정한 key를 이용한 엔트리(key-value한쌍) 삭제 , 템플릿객체명.delete( key );  , 삭제 성공시 true / 실패시 false
-        boolean result = studentTemplate.delete( key );
-        return ResponseEntity.ok( result );
+
+    // [4] 개별 삭제
+    // DELETE http://localhost:8080/redis?sno=1
+    @DeleteMapping("")
+    public boolean delete(@RequestParam(name="mno") int mno) {
+        String key = "member:" + mno;
+        // 1. 특정한 key 삭제 (성공 시 true, 실패 또는 없으면 false)
+        Boolean result = redisTemplate.delete(key);
+        return result;
     }
-    @PutMapping("") // http://localhost:8080/redis        // 5. 개별 수정
-    // { "sno": 2, "name": "강호동 ", "kor": 100, "math": 100 }
-    public ResponseEntity<?> update( @RequestBody StudentDto studentDto ){
-        String key = "student:"+studentDto.getSno();                // 1. 수정할 key 구상
-        studentTemplate.opsForValue().set( key , studentDto );      // 2. 특정한 key를 덮여쓰기/수정
-        return ResponseEntity.ok( true ); //
+
+    // [5] 개별 수정
+    // PUT http://localhost:8080/redis
+    // Body: { "sno": 1, "name": "유재석", "kor": 100, "math": 100 }
+    @PutMapping("")
+    public boolean update(@RequestBody MemberDto memberDto) throws JsonProcessingException  {
+        String key = "member:" + memberDto.getMno();
+        // 1. 수정한 DTO 객체 -> JSON 문자열 변환
+        String jsonStr = objectMapper.writeValueAsString(memberDto);
+        // 2. 동일한 key에 덮어쓰기(Overwrite)
+        redisTemplate.opsForValue().set(key, jsonStr);
+        return true;
     }
 
     // * 인증코드 발급 해서 레디스 유효기간 정하기
     // TTL : 레디스에 저장된 엔트리(key-value) 을 특정한 기간(시간)이 되면 자동 삭제
     @GetMapping("/auth/send") // http://localhost:8080/redis/auth/send?phone=01039132072
-    public ResponseEntity<?> authSend( @RequestParam String phone ){
+    public ResponseEntity<?> authSend( @RequestParam(name = "phone") String phone ){
         // 1. key 구상 , "auth:고객전화번호"
         String key = "auth:"+phone;
         // 난수 6자리( 인증코드 생성 )
@@ -95,7 +129,7 @@ public class RedisController {
         return ResponseEntity.ok().body("인증코드 발급 완료 : " + code );
     }
     @GetMapping("/auth/confirm") // http://localhost:8080/redis/auth/confirm?phone=01039132072&code=361170
-    public ResponseEntity<?> authConfirm( @RequestParam String phone , @RequestParam String code ){
+    public ResponseEntity<?> authConfirm( @RequestParam(name = "phone") String phone , @RequestParam(name = "code") String code ){
         String key = "auth:"+phone; // 1. 조회할 key 구상
         Object savedCode = redisTemplate.opsForValue().get(key); // 2. 조회할 key 이용한 value 호출
         if( savedCode == null ){ return ResponseEntity.ok("[인증실패] 인증 만료 또는 코드 불일치 "); }
