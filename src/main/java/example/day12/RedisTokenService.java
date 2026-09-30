@@ -22,6 +22,6 @@ public class RedisTokenService {
     }
     // [4] refresh 토큰 삭제 함수 
     public boolean deleteRefreshToken( Long mno ){
-        return stringRedisTemplate.delete( "RT:"+mno ); // 삭제할 key 조합하여 조회
+        return stringRedisTemplate.delete( "RT:"+mno ); // 삭제할 key 조합하여 삭제
     }
 }
