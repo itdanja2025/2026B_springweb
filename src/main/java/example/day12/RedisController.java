@@ -7,8 +7,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -86,6 +88,23 @@ public class RedisController {
         MemberDto memberDto = objectMapper.readValue(value, MemberDto.class );
         return memberDto;
     }
-
-
+    // [4] 삭제 , http://localhost:8080/api/redis/member?mno=1
+    @DeleteMapping("/member") 
+    public boolean delete( @RequestParam(name = "mno") Long mno ){
+        // 1. 삭제할 mno 매개변수로 받는다.
+        String deleteKey = "member:"+mno; // 2. 삭제할 key 조합하여 삭제한다.
+        boolean result = stringRedisTemplate.delete(deleteKey); // .delete(삭제할키)
+        return result;
+    }
+    // [5] 수정 // { "mno" : "1" , "mid" : "qwe" , "mpwd" : "1234", "mname" :"유재석2","role":"user"}
+    @PutMapping("/member")
+    public boolean update( @RequestBody MemberDto memberDto ) throws JsonProcessingException{
+        // 1. 수정할 자료들을 dto 받는다. //2. 수정할 key 조합하여 수정한다.
+        String updateKey = "member:"+memberDto.getMno();
+        if( updateKey == null ) return false;
+        // 3. 동일한 키로 입력받은 dto 직렬화 저장
+        String value = objectMapper.writeValueAsString( memberDto ); // dto -> 문자열 
+        stringRedisTemplate.opsForValue().set(updateKey, value );
+        return true;
+    }
 }
