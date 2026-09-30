@@ -1,5 +1,6 @@
 package example.day12;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,9 +11,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -41,7 +44,8 @@ public class RedisController {
     }
 
     // ********* redis CRUD ********* 
-    private final ObjectMapper objectMapper = new ObjectMapper(); // 직렬화
+    private final ObjectMapper objectMapper = new ObjectMapper(); // 직렬화 객체
+    // [1] dto 저장 // { "mno" : "1" , "mid" : "qwe" , "mpwd" : "1234", "mname" :"유재석","role":"user"}
     @PostMapping("/member")
     public boolean save( @RequestBody MemberDto memberDto ) throws JsonProcessingException{
         // 1. 중복 없는 key 구성( 예] 도메인명 : 식별키 )
@@ -53,5 +57,35 @@ public class RedisController {
         stringRedisTemplate.opsForValue().set(key, str); // { "member:1" : { mno:1 , mid:qwe } }
         return true;
     }
-    
+    // [2] 전체조회
+    @GetMapping ("/member")
+    public List<MemberDto> findAll( ) throws JsonMappingException, JsonProcessingException{
+        // 1. 특정 패턴의 key 조회 , member:* , member로 시작하는 모든 키 조회 
+        Set<String> keys = stringRedisTemplate.keys("member:*");
+        // 2. 모든 키 반복 하여 ** 하나씩 ** 키에 대응하는 dto(값)호출 
+        List<MemberDto> list = new ArrayList<>();
+        for( String key : keys){
+             String value = stringRedisTemplate.opsForValue().get( key );
+             // 3. 역직렬화 , 문자열 -> 자바객체
+             // objectMapper.readValue( 값 , 타입명.class ); , 예외발생
+            MemberDto memberDto = objectMapper.readValue( value , MemberDto.class );
+            // 리스트에 담기 
+            list.add(memberDto);
+        }
+        return list; // 반환
+    }
+    // [3] 개별조회 // http://localhost:8080/api/redis/member/find?mno=1
+    @GetMapping ("/member/find")
+    public MemberDto find( @RequestParam (name="mno") Long mno ) throws JsonMappingException, JsonProcessingException{
+        // 1. 조회할 mno 매개변수로 받는다.
+        // 2. 레디스에서 특정 mno의 키 조회 
+        String findKey = "member:"+mno; 
+        String value = stringRedisTemplate.opsForValue().get( findKey );
+        if( value == null ) return null;
+        // 3. 역직렬화 : string -> 자바객체(dto/map/list 등등)
+        MemberDto memberDto = objectMapper.readValue(value, MemberDto.class );
+        return memberDto;
+    }
+
+
 }
