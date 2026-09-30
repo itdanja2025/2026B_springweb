@@ -50,8 +50,8 @@ public class MemberController {
                         .httpOnly(true).secure(false).sameSite("Lax").build();
 
         // 3. 응답 헤더에 쿠키 2개 등록 , response.setHeader( )
-        response.setHeader( HttpHeaders.SET_COOKIE  , cookie1.toString() );
-        response.setHeader( HttpHeaders.SET_COOKIE2  , cookie2.toString() );
+        response.addHeader( HttpHeaders.SET_COOKIE  , cookie1.toString() );
+        response.addHeader( HttpHeaders.SET_COOKIE  , cookie2.toString() );
         return result;
     }
 
@@ -81,8 +81,8 @@ public class MemberController {
             ResponseCookie cookie2 = ResponseCookie.from("refreshToken" , "" )
                                     .path("/").maxAge( 0 ) // 0초
                                     .httpOnly(true).secure(false).build();
-            response.setHeader( HttpHeaders.SET_COOKIE  , cookie1.toString() );
-            response.setHeader( HttpHeaders.SET_COOKIE2  , cookie2.toString() );
+            response.addHeader( HttpHeaders.SET_COOKIE  , cookie1.toString() );
+            response.addHeader( HttpHeaders.SET_COOKIE  , cookie2.toString() );
             return true;
     }
 }
