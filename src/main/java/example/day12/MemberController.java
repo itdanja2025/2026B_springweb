@@ -85,4 +85,38 @@ public class MemberController {
             response.addHeader( HttpHeaders.SET_COOKIE  , cookie2.toString() );
             return true;
     }
+    // [5] access 토큰 만료될 때 Refresh 검증 후 토큰 재발급
+    @PostMapping("/reissue")
+    public MemberDto reissue( 
+        @CookieValue (value = "refreshToken" , required = false) String refreshToken , HttpServletResponse response){
+        // 1. refresh 토큰 가져온다. // 존재 여부 확인 
+        if( refreshToken == null ) return null;
+        // 2. refresh 토큰내 검증하여 회원번호 조회 
+        Long mno = jwtUtil.getMnoFromToken(refreshToken);
+        // 3. 레디스에 저장된 refresh 토큰 꺼내기 
+        String savedRefreshToken = redisTokenService.getRefreshToken(mno);
+        // 4. 만약에 레디스에 없거나 전달받은 토큰과 다르면 / 문제발생!
+        if( savedRefreshToken == null || !refreshToken.equals( savedRefreshToken ) ){
+            redisTokenService.deleteRefreshToken(mno); // 다르면 토큰 삭제하여 자동 로그아웃 
+        }
+        // 5. 새로운 accessToken 가 RefreshToken 재발급 ( 기존 토큰들은 무효화 )
+        String newAccessToken = jwtUtil.createAccessToken( mno );
+        String newRefreshToken = jwtUtil.createRefreshToken( mno );
+        // 6. 레디스에 새로운 refresh 토큰 저장
+        redisTokenService.setRefreshToken( mno , newRefreshToken);
+        // 7. 쿠키 설정
+        ResponseCookie cookie1 = ResponseCookie.from("accessToken" , newAccessToken)
+                                .path("/").maxAge(Duration.ofMinutes(30) ) // 30분
+                                .httpOnly(true).secure(false).sameSite("Lax").build();
+        ResponseCookie cookie2 = ResponseCookie.from("refreshToken" , newRefreshToken)
+                        .path("/").maxAge(Duration.ofDays(7) ) // 7일 
+                        .httpOnly(true).secure(false).sameSite("Lax").build();
+
+        // 8. header 에 2개 이상 쿠키 포함한경우 .addHeader( ) [ o ]   .setHeader( ) [x]
+        response.addHeader( HttpHeaders.SET_COOKIE  , cookie1.toString() );
+        response.addHeader( HttpHeaders.SET_COOKIE  , cookie2.toString() );
+        return memberService.getMyInfo(mno); // 9. 토큰 재발급 회원정보 반환 
+    }
+
+
 }
