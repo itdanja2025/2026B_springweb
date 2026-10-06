@@ -43,6 +43,8 @@ dependencies { // start.spring.io
 	// 10. 레디스 
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+	implementation 'org.springframework.boot:spring-boot-starter-websocket' // 12] 웹소켓
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
