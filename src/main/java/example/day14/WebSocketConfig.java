@@ -36,6 +36,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         -> RESTAPI CRUD
 
     WebSocket(프로토콜) : 클라이언트와 서버가 연결 상태 유지하고 , 서로 통신 하는 구조
-        -> 양방향 구조, 상태유지 , STOMP( pub(발행) / sub(구독) )
+        -> 양방향 구조, 상태유지 , STOMP(  sub(구독) / pub(발행)  )
         -> 실시간 통신( 채팅 , 알림 , 지도/실시간위치 등등 )
 */
