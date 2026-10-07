@@ -1,6 +1,9 @@
 package example.day13;
 
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,7 +33,10 @@ public class BoardService {
         return true;
     }
     // [2] 전체 조회
-    public List<BoardDto> boardFindAll() {
+    public List<BoardDto> boardFindAll( int currentPage ) {
+
+        PageRequest page = PageRequest.of( currentPage-1 , 10 );
+        
         return boardRepository.findAll().stream()
                 .map(BoardDto::fromEntity)
                 .collect(Collectors.toList());

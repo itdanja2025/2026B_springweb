@@ -1,6 +1,7 @@
 package example.day10;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,9 +23,12 @@ public class MemberService {
             // passwordEncoder.encode("평문");
         String 암호문 = passwordEncoder.encode( memberDto.getMpwd() ); // 입력받은 비밀번호 평문->암호문
         memberEntity.setMpwd( 암호문 ); // 암호문을 엔티티에 대입
+        memberEntity.setMno( UUID.randomUUID().toString() );
+
+
         MemberEntity savedEntity = memberRepository.save( memberEntity );
         // 4) confirm
-        if( savedEntity.getMno() >= 1 ) return true;
+        if( savedEntity.getMno() != null ) return true;
         return false;
     }
     // [2] 로그인 = 조회 = Read = R 

@@ -23,8 +23,9 @@ public class BoardController {
 
     // 전체 조회
     @GetMapping("/list")
-    public List<BoardDto> list() {
-        return boardService.boardFindAll();
+    public List<BoardDto> list( 
+        @RequestParam (name="currentPage") int currentPage ) {
+        return boardService.boardFindAll( currentPage );
     }
 
     // 개별 조회
