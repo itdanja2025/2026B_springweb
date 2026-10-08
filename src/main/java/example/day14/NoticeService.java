@@ -25,6 +25,12 @@ public class NoticeService {
     public SseEmitter subscribe( ){
         SseEmitter emitter = new SseEmitter(); // 2-1 : SseEmitter 객체 생성 
         emitters.add( emitter ); // 2-2 : 리스트에 저장 
+        // 2-4: 안전하게 클라이언트 연결이 비정상이면 리스트에서 삭제
+        // * 리액트에서 새로고침(F5) 중복되는 구독 신청으로 문제발생  
+        emitter.onCompletion( () -> emitters.remove(emitter) );
+        emitter.onTimeout( () -> emitters.remove(emitter) );
+        emitter.onError( (e) -> emitters.remove(emitter) );
+        
         return emitter; // 2-3 : 생성된 객체를 반환 
     }
     // 3. 메시지 전송 ( 서버가 클라이언트에게 메시지 전송 )
