@@ -8,7 +8,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.springframework.stereotype.Service;
 /*
     Websocket + Stomp : (양방향 , 클라이언트<-->서버 ) 채팅구현
-    SSE : (단방향, 클라이언 <--> 서버 ) 알림
+    SSE : (단방향, 클라이언 <-- 서버 ) 알림
 */
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 @Service
