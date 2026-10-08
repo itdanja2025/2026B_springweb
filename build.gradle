@@ -44,7 +44,7 @@ dependencies { // start.spring.io
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	// 11. 웹소켓
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
-
+	
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }

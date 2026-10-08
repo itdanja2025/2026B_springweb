@@ -17,7 +17,7 @@ import org.hibernate.annotations.ColumnDefault;
 public class MemberEntity extends BaseTime {
 
     @Id
-    private String mno; // 회원번호
+    private Long mno; // 회원번호
 
     @Column(nullable = false, unique = true, length = 100)
     private String mid; // 회원아이디
