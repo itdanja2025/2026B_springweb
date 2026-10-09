@@ -1,4 +1,4 @@
-package example.day14;
+package example.day14_;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
