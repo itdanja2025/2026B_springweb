@@ -45,6 +45,9 @@ dependencies { // start.spring.io
 	// 11. 웹소켓
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	
+	implementation 'org.jsoup:jsoup:1.23.2'
+	implementation 'com.microsoft.playwright:playwright:1.63.0'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
