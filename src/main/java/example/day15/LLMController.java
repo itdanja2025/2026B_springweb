@@ -30,5 +30,9 @@ public class LLMController {
         @RequestParam("topic") String topic ){
             return llmService.chat3(topic);
     }
-
+    // 4.
+    @GetMapping ("/chat4")
+    public String chat4( @RequestParam("userMessage") String msg ){
+            return llmService.chat4(msg);
+    }
 }
